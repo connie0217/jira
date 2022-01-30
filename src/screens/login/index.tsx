@@ -1,6 +1,7 @@
 import { FormEvent } from "react"
 import {useAuth} from '../../context/auth-context'
 import { Form, Input } from "antd";
+import { useDocTitle } from "../../utils/useDocTitle";
 
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -17,6 +18,7 @@ export const LoginScreen = () => {
         register({ username, password })
         event.preventDefault()
     }
+    useDocTitle('jira登录')
     return <Form>
         <Form.Item label="用户名" htmlFor="username">
             <Input name="username"/>

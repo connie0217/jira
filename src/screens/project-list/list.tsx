@@ -1,10 +1,11 @@
 import {User} from './search-panel'
 import { Table } from "antd";
 import { useEffect } from "react";
-import { Route, useSearchParams, BrowserRouter } from "react-router-dom";
+import { Route, useSearchParams, BrowserRouter, Link } from "react-router-dom";
+import { TableProps } from "antd/lib/table/Table";
 
-interface Project {
-    id?: string;
+export interface Project {
+    id: string;
     name: string;
     email: string;
     title: string;
@@ -13,21 +14,14 @@ interface Project {
 }
 
 
-interface ListProps {
-    list: Project[];
+interface ListProps extends TableProps<Project>{
     users: User[];
+    list: Project[];
 }
 
-const List = ({list, users}: ListProps) => {
-    // const [searchParams, setSearchParams] = useSearchParams()
-    // console.log('searchParams', searchParams)
-    useEffect(() => {
-        console.log('挂在时候')
-        return () => {
-            console.log('卸载时候')
-        }
-    }, [])
 
+const List = (props: ListProps) => {
+    const users = {props}
     return <div>
             <Table
               columns={
@@ -35,17 +29,25 @@ const List = ({list, users}: ListProps) => {
                       {
                           title: "名称",
                           dataIndex: "name",
-                          key: "id"
+                          key: "id",
+                          render: (val, project) => {
+                              return <Link to={String(project.id)}>{val}</Link>
+                          }
                       },
                       {
                           title: "负责人",
                           dataIndex: "personId",
-                          key: "id",
-                          render: (val) => users.find(user => user.id === val)?.name
+                          key: "personId",
+                          render: (val) => props.users.find(user => user.id === val)?.name
+                      },
+                      {
+                          title: "部门",
+                          dataIndex: "organization",
+                          key: "organization"
                       }
                   ]
               }
-              dataSource={list}
+              dataSource={props.list}
               rowKey={"id"}
             />
     </div>

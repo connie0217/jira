@@ -22,9 +22,9 @@ export const useAsync = <T>(initialStat?: AsyncStat<T>) => {
 
   const setData = (data: T) => {
     setState({
-      data,
       stat: 'success',
-      error: null
+      error: null,
+      data
     })
   }
 
@@ -37,6 +37,19 @@ export const useAsync = <T>(initialStat?: AsyncStat<T>) => {
 
   }
 
+  const testRun = (promise: Promise<T>) => {
+    setState({
+      ...state,
+      stat: 'loading'
+    })
+    promise.then(res => {
+      setState({
+        ...state,
+        stat: 'success'
+      })
+      return res
+    })
+  }
   const run = (promise: Promise<T>) => {
     if (!promise || !promise.then) {
       throw new Error('请传入promise')
@@ -46,6 +59,7 @@ export const useAsync = <T>(initialStat?: AsyncStat<T>) => {
       stat: 'loading'
     })
     return promise.then((res: T) => {
+              console.log('run-promise', res)
               setData(res)
               return res
             }).catch((error: Error) => {
@@ -62,6 +76,7 @@ export const useAsync = <T>(initialStat?: AsyncStat<T>) => {
     isError: state.stat === 'error',
     run,
     setData,
-    setError
+    setError,
+    ...state
   }
 }

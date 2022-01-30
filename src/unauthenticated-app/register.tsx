@@ -1,23 +1,32 @@
 import { FormEvent } from "react"
 import  {useAuth} from "../context/auth-context";
 import { Button, Form, Input } from "antd";
+import { useAsync } from "../utils/useAsync";
 
 export const RegisterScreen = () => {
   const { register } = useAuth()
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const {run} = useAsync()
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     console.log((event.currentTarget.elements[0] as HTMLFormElement).value)
     const username = (event.currentTarget.elements[0] as HTMLFormElement).value
     const password = (event.currentTarget.elements[1] as HTMLFormElement).value
-    register({ username, password })
+    try {
+      await run(register({ username, password }))
+    } catch (err) {
+      console.log(err)
+    }
     event.preventDefault()
   }
-  return <Form onFinish={({username, password, cpassword}: {
+  return <Form onFinish={async ({username, password, cpassword}: {
     username: string;
     password: string;
     cpassword: string;
   }) => {
-    console.log(cpassword)
-    register({ username, password })
+    try {
+      await run(register({ username, password }))
+    } catch (err) {
+      console.log(err)
+    }
   }
   }>
     <Form.Item name="username">

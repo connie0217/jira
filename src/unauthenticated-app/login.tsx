@@ -2,6 +2,7 @@ import { FormEvent } from "react"
 import  {useAuth} from "../context/auth-context";
 import { Button, Form, Input } from "antd";
 import {useAsync} from "../utils/useAsync";
+import { useDocTitle } from "../utils/useDocTitle";
 
 interface LoginParam {
   username: string;
@@ -9,12 +10,16 @@ interface LoginParam {
 }
 
 export const LoginScreen = () => {
-  const { login } = useAuth()
+  const { login} = useAuth()
   const {run, isLoading} = useAsync()
-  return <Form onFinish={async ({username, password}: LoginParam) => {
+  useDocTitle('登录')
+  return <Form onFinish={async (values: LoginParam) => {
     try {
-      await login({ username, password })
-      // await run(login({ username, password }))
+      // login(values).then(res => {
+      //   console.log('login', res)
+      // })
+      await login(values)
+      // await run(login(values))
     } catch (error) {
       console.log('登录catch', error)
     }

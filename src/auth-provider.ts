@@ -5,10 +5,9 @@ const localStorageKey = "__auth_provider_token__";
 
 export const getToken = () => window.localStorage.getItem(localStorageKey)
 
-export const handleUserResponse = ({user}: {user: User}) => {
+export const handleUserResponse = async ({user}: {user: User}) => {
   // 登录成功后操作
   window.localStorage.setItem(localStorageKey, user.token)
-  console.log(111, user)
   return user
 }
 
@@ -20,11 +19,12 @@ export const login = (data: {username: string; password: string}) => {
     },
     body: JSON.stringify(data),
   }).then(async(res) => {
-    let data = await res.json()
+    // let data = await res.json()
     if (res.ok) {
-      return handleUserResponse(data)
+      // console.log('handleUserResponse', handleUserResponse(data))
+      return handleUserResponse(await res.json())
     }
-    return Promise.reject(data)
+    return Promise.reject(await res.json())
   })
 }
 
@@ -36,9 +36,9 @@ export const register =  (data: {username: string; password: string}) => {
     },
     body: JSON.stringify(data),
   }).then(async(res) => {
-    if (res.ok) {
-      let data = await res.json()
-      return handleUserResponse(data)
+    if (res && res.ok) {
+      // let data = await res.json()
+      return handleUserResponse(await res.json())
     }
     return Promise.reject(data)
   })

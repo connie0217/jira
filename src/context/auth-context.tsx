@@ -4,6 +4,8 @@ import { User } from "../screens/project-list/search-panel";
 import { getToken, logout, register } from "../auth-provider";
 import { useMount } from "../screens/project-list/utils";
 import { http } from "../utils/http";
+import { useAsync } from "../utils/useAsync";
+import { FullPageLoading } from "../lib";
 
 interface AuthForm {
   username: string;
@@ -13,25 +15,32 @@ interface AuthForm {
 
 const AuthContext = createContext<{
   user: User | null;
-  login: (form:AuthForm) => Promise<void>;
+  login: (form:AuthForm) => Promise<User | null>;
   register: (form:AuthForm) => Promise<void>;
   logout: () => Promise<void>;
 } | undefined>(undefined);
 AuthContext.displayName = "AuthContext";
 
 
-const checkLogin = (token: string) => {
-  return http('me', {token}).then(
-    data => {
-      return data.user
-    }
-  )
+const checkLogin = async () => {
+  let token = getToken() || ''
+  if (token) {
+    return http('me', {token}).then(
+      data => {
+        return data.user
+      })
+  }
+  return null
 }
 // 注入
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const {run, isLoading, data: user, setData: setUser} =useAsync<User | null>()
+  // const [user, setUser] = useState<User | null>(null)
   const login = (form:AuthForm) => {
-    return auth.login(form).then(setUser)
+    // return auth.login(form).then((res) => {
+    //   setUser(res)
+    // })
+    return run(auth.login(form))
   }
   const register = (form:AuthForm) => {
     return auth.register(form).then(setUser)
@@ -42,11 +51,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // 首次加载判断有无登录态，并注入到user
   useMount(() => {
-    let token = getToken() || ''
-    if (token) {
-      checkLogin(token).then(setUser)
-    }
+    run(checkLogin())
   })
+
+  if (isLoading) {
+    return <FullPageLoading></FullPageLoading>
+  }
 
   // 需要把children注入
   return <AuthContext.Provider children={children} value={{ user, login, register, logout }} ></AuthContext.Provider>
