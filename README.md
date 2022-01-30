@@ -46,3 +46,5 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 https://www.notion.so/React17-React-Hook-TS4-Jira-3bd9b4744bb44236b1b536e4b76738c6
+
+//    "jira-dev-tool": "^1.7.61",

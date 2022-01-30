@@ -2,7 +2,7 @@ import { SearchPanel } from "./search-panel"
 import List from "./list"
 import { useEffect, useState } from "react"
 import {cleanObject, useMount, useDebounce} from './utils/index'
-import qs from 'qs'
+import { useHttp } from "../../utils/http";
 
 const ProjectListScreen = () => {
     // 用户状态： 搜索， id
@@ -12,13 +12,11 @@ const ProjectListScreen = () => {
     })
     const [users, setUsers] = useState([])
     const [list, setList] = useState([])
-
+    const client = useHttp()
     // 加载时触发
     useMount(() => {
-        fetch('http://localhost:3001/users').then(async (res) => {
-            let json = await res.json()
-            setUsers(json)
-        })
+        // client('users').then(setUsers)
+        client('users').then(setUsers)
     })
     
 
@@ -26,10 +24,9 @@ const ProjectListScreen = () => {
     let debounceParams=useDebounce(params, 3000)
     // 观察params
     useEffect(() => {
-        fetch(`http://localhost:3001/projects?${qs.stringify(cleanObject(debounceParams))}`).then(async (res) => {
-            let json = await res.json()
-            setList(json)
-        })
+        client('projects', {
+            data: cleanObject(debounceParams)
+        }).then(setList)
     }, [debounceParams])
     return <div>
         <SearchPanel params={params} users={users} setParam={setParam}/>

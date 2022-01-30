@@ -77,14 +77,14 @@ self.addEventListener('message', async function (event) {
 self.addEventListener('fetch', function (event) {
   const { clientId, request } = event
   const requestClone = request.clone()
-  console.log('requestClone----', requestClone)
+  // console.log('requestClone----', requestClone)
   const getOriginalResponse = () => fetch(requestClone)
 
   // Bypass navigation requests.
   if (request.mode === 'navigate') {
     return
   }
- console.log(clients[clientId], request.cache, request.mode)
+ // console.log(clients[clientId], request.cache, request.mode)
   // Bypass mocking if the current client isn't present in the internal clients map
   // (i.e. has the mocking disabled).
   if (!clients[clientId]) {
@@ -102,7 +102,7 @@ self.addEventListener('fetch', function (event) {
       const client = await event.target.clients.get(clientId)
 
 
-      console.log('client---', client)
+      // console.log('client---', client)
       // Bypass mocking when the request client is not active.
       if (!client) {
         return resolve(getOriginalResponse())
@@ -147,7 +147,7 @@ self.addEventListener('fetch', function (event) {
 
       const clientMessage = rawClientMessage
 
-      console.log('clientMessage', clientMessage)
+      // console.log('clientMessage', clientMessage)
       switch (clientMessage.type) {
         case 'MOCK_SUCCESS': {
           setTimeout(

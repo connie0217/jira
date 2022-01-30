@@ -5,9 +5,10 @@ const localStorageKey = "__auth_provider_token__";
 
 export const getToken = () => window.localStorage.getItem(localStorageKey)
 
-export const handleUserResponse = (user:User) => {
+export const handleUserResponse = ({user}: {user: User}) => {
   // 登录成功后操作
   window.localStorage.setItem(localStorageKey, user.token)
+  console.log(111, user)
   return user
 }
 

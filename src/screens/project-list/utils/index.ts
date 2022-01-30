@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 
 // 清理对象kongzhi 
-export const cleanObject = (object: {[key: string]: unknown}) => {
+export const cleanObject = (object: {[key: string]: unknown}):{ [p: string]: unknown } => {
     // 不能改变传入对象本身
     const result = {...object}
     Object.keys(object).forEach(key => {
