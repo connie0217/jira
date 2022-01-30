@@ -20,8 +20,8 @@ export const login = (data: {username: string; password: string}) => {
     },
     body: JSON.stringify(data),
   }).then(async(res) => {
+    let data = await res.json()
     if (res.ok) {
-      let data = await res.json()
       return handleUserResponse(data)
     }
     return Promise.reject(data)
